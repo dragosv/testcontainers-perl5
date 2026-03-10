@@ -1,0 +1,15 @@
+/Testcontainers-*
+/.build/
+/blib/
+/_build/
+/cover_db/
+/Build
+/Build.bat
+/MYMETA.*
+/Makefile
+/Makefile.old
+*.o
+*.bs
+*.sw[po]
+*~
+.DS_Store
