@@ -28,7 +28,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cpanm --notest --installdeps .
+          cpanm --installdeps .
           cpanm --notest Perl::Critic Perl::Tidy
 
       - name: Perl::Critic (lint)
