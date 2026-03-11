@@ -1,0 +1,137 @@
+name: Main pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+concurrency:
+  group: "${{ github.workflow }}-${{ github.head_ref || github.sha }}"
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Setup Perl
+        uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: "5.42"
+
+      - name: Install dependencies
+        run: |
+          cpanm --notest --installdeps .
+          cpanm --notest Perl::Critic Perl::Tidy
+
+      - name: Perl::Critic (lint)
+        run: |
+          if [ -f .perlcriticrc ]; then
+            perlcritic lib/
+          else
+            perlcritic --severity 4 lib/
+          fi
+
+      - name: Check syntax
+        run: |
+          find lib/ -name '*.pm' -exec perl -c {} \;
+
+  test-unit:
+    name: "Unit tests (Perl ${{ matrix.perl-version }})"
+    needs: [lint]
+    strategy:
+      fail-fast: false
+      matrix:
+        perl-version: ["5.42", "5.40"]
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Setup Perl
+        uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: "${{ matrix.perl-version }}"
+
+      - name: Install dependencies
+        run: cpanm --installdeps .
+
+      - name: Run unit tests
+        run: prove -lv t/01-load.t t/02-container-request.t t/03-wait-strategies.t
+
+      - name: Test Summary
+        uses: test-summary/action@v2
+        with:
+          paths: "**/junit-*.xml"
+        if: always()
+
+  test-integration:
+    name: "Integration tests (Perl ${{ matrix.perl-version }})"
+    needs: [lint, test-unit]
+    strategy:
+      fail-fast: false
+      matrix:
+        perl-version: ["5.42", "5.40"]
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Setup Perl
+        uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: "${{ matrix.perl-version }}"
+
+      - name: Verify Docker is available
+        run: |
+          docker version
+          docker info
+
+      - name: Install dependencies
+        run: |
+          cpanm --installdeps .
+          cpanm --notest HTTP::Tiny
+
+      - name: Pre-pull Docker images
+        run: |
+          docker pull nginx:alpine &
+          docker pull postgres:16-alpine &
+          docker pull redis:7-alpine &
+          wait
+
+      - name: Run integration tests
+        env:
+          TESTCONTAINERS_LIVE: "1"
+        run: prove -lv t/04-integration.t
+
+      - name: Run module tests
+        env:
+          TESTCONTAINERS_LIVE: "1"
+        run: prove -lv t/05-modules.t
+
+      - name: Clean up containers
+        if: always()
+        run: |
+          docker ps -a --filter "label=org.testcontainers" -q | xargs -r docker rm -f
+          docker system prune -f
+
+  # This job serves as confirmation that all test jobs finished
+  end:
+    needs: [lint, test-unit, test-integration]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Check if any jobs failed
+        if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}
+        run: exit 1
+
+      - run: echo "All tests completed successfully!"
