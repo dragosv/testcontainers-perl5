@@ -45,7 +45,6 @@ jobs:
 
   test-unit:
     name: "Unit tests (Perl ${{ matrix.perl-version }})"
-    needs: [lint]
     strategy:
       fail-fast: false
       matrix:
@@ -75,7 +74,6 @@ jobs:
 
   test-integration:
     name: "Integration tests (Perl ${{ matrix.perl-version }})"
-    needs: [lint, test-unit]
     strategy:
       fail-fast: false
       matrix:
