@@ -43,8 +43,8 @@ jobs:
         run: |
           find lib/ -name '*.pm' -exec perl -c {} \;
 
-  test-unit:
-    name: "Unit tests (Perl ${{ matrix.perl-version }})"
+  build-and-test-unit:
+    name: "Build and Unit tests (Perl ${{ matrix.perl-version }})"
     strategy:
       fail-fast: false
       matrix:
@@ -62,6 +62,9 @@ jobs:
 
       - name: Install dependencies
         run: cpanm --installdeps .
+
+      - name: Build and install module
+        run: perl Build.PL && ./Build manifest && ./Build install --installdeps
 
       - name: Run unit tests
         run: prove -lv t/01-load.t t/02-container-request.t t/03-wait-strategies.t
@@ -124,7 +127,7 @@ jobs:
 
   # This job serves as confirmation that all test jobs finished
   end:
-    needs: [lint, test-unit, test-integration]
+    needs: [lint, build-and-test-unit, test-integration]
     runs-on: ubuntu-latest
     if: always()
     steps:

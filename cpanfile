@@ -1,4 +1,4 @@
-requires 'perl', '5.042';
+requires 'perl', '5.040';
 
 # Core dependencies
 requires 'Moo', '2.005';
