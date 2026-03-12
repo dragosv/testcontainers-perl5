@@ -1,7 +1,8 @@
 package Testcontainers::Wait::Base;
 # ABSTRACT: Base role for wait strategies
 
-use v5.42;
+use strict;
+use warnings;
 use Moo::Role;
 use Carp qw( croak );
 use Log::Any qw( $log );

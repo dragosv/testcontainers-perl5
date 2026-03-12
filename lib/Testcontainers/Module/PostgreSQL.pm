@@ -1,7 +1,8 @@
 package Testcontainers::Module::PostgreSQL;
 # ABSTRACT: PostgreSQL container module for Testcontainers
 
-use v5.42;
+use strict;
+use warnings;
 use Carp qw( croak );
 use Testcontainers;
 use Testcontainers::Wait;
@@ -117,7 +118,8 @@ Options:
 
 package Testcontainers::Module::PostgreSQL::Container;
 
-use v5.42;
+use strict;
+use warnings;
 use Moo;
 
 has _inner   => (is => 'ro', required => 1, handles => [qw(

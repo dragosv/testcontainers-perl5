@@ -1,7 +1,8 @@
 package Testcontainers::DockerClient;
 # ABSTRACT: Docker client wrapper using WWW::Docker
 
-use v5.42;
+use strict;
+use warnings;
 use Moo;
 use Carp qw( croak );
 use Log::Any qw( $log );

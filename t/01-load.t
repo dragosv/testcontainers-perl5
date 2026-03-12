@@ -1,4 +1,5 @@
-use v5.42;
+use strict;
+use warnings;
 use Test::More;
 
 # Unit tests for core module loading and basic functionality

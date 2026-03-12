@@ -1,7 +1,8 @@
 package Testcontainers::Module::Redis;
 # ABSTRACT: Redis container module for Testcontainers
 
-use v5.42;
+use strict;
+use warnings;
 use Carp qw( croak );
 use Testcontainers;
 use Testcontainers::Wait;
@@ -75,7 +76,8 @@ Options: C<image>, C<port>, C<password>, C<startup_timeout>, C<name>.
 
 package Testcontainers::Module::Redis::Container;
 
-use v5.42;
+use strict;
+use warnings;
 use Moo;
 
 has _inner   => (is => 'ro', required => 1, handles => [qw(

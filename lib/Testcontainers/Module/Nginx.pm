@@ -1,7 +1,8 @@
 package Testcontainers::Module::Nginx;
 # ABSTRACT: Nginx container module for Testcontainers
 
-use v5.42;
+use strict;
+use warnings;
 use Carp qw( croak );
 use Testcontainers;
 use Testcontainers::Wait;
@@ -66,7 +67,8 @@ Options: C<image>, C<port>, C<startup_timeout>, C<name>.
 
 package Testcontainers::Module::Nginx::Container;
 
-use v5.42;
+use strict;
+use warnings;
 use Moo;
 
 has _inner => (is => 'ro', required => 1, handles => [qw(

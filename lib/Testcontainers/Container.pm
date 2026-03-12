@@ -1,7 +1,8 @@
 package Testcontainers::Container;
 # ABSTRACT: A running Docker container managed by Testcontainers
 
-use v5.42;
+use strict;
+use warnings;
 use Moo;
 use Carp qw( croak );
 use Log::Any qw( $log );

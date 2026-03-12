@@ -1,7 +1,8 @@
 package Testcontainers::Wait::Multi;
 # ABSTRACT: Composite wait strategy combining multiple strategies
 
-use v5.42;
+use strict;
+use warnings;
 use Moo;
 use Carp qw( croak );
 use Log::Any qw( $log );

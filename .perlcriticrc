@@ -1,7 +1,7 @@
 severity = 4
 verbose  = %f:%l:%c: %m (%p; Severity: %s)\n
 
-# We use v5.42 features intentionally
+# We use v5.40 features intentionally
 [-Compatibility::PerlMinimumVersionAndWhy]
 
 # Moo classes don't need strict/warnings with v5.42
