@@ -4,7 +4,9 @@ requires 'perl', '5.042';
 requires 'Moo', '2.005';
 requires 'namespace::clean', '0.27';
 requires 'Log::Any', '1.710';
-requires 'WWW::Docker', '0.100';
+requires 'JSON::MaybeXS', '1.004';
+requires 'URI';
+requires 'IO::Socket::UNIX';
 requires 'Time::HiRes';
 requires 'IO::Socket::INET';
 requires 'Carp';
@@ -12,7 +14,6 @@ requires 'Exporter';
 
 # Optional but recommended
 recommends 'HTTP::Tiny', '0.076';
-recommends 'JSON::MaybeXS', '1.004';
 
 # Test dependencies
 on 'test' => sub {

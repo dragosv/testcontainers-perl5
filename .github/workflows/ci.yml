@@ -34,9 +34,9 @@ jobs:
       - name: Perl::Critic (lint)
         run: |
           if [ -f .perlcriticrc ]; then
-            perlcritic lib/
+            perlcritic lib/Testcontainers.pm lib/Testcontainers/
           else
-            perlcritic --severity 4 lib/
+            perlcritic --severity 4 lib/Testcontainers.pm lib/Testcontainers/
           fi
 
       - name: Check syntax
