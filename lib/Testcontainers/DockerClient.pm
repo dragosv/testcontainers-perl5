@@ -47,6 +47,7 @@ sub pull_image {
         $log->warnf("Failed to pull image %s:%s: %s", $name, $tag, $@);
         # Don't die - image may already exist locally
     }
+    return;
 }
 
 =method pull_image($image)
@@ -81,6 +82,7 @@ sub start_container {
 
     $log->debugf("Starting container: %s", $id);
     $self->_client->containers->start($id);
+    return;
 }
 
 =method start_container($id)
@@ -99,6 +101,7 @@ sub stop_container {
     if ($@) {
         $log->warnf("Error stopping container %s: %s", $id, $@);
     }
+    return;
 }
 
 =method stop_container($id, %opts)
@@ -121,6 +124,7 @@ sub remove_container {
     if ($@) {
         $log->warnf("Error removing container %s: %s", $id, $@);
     }
+    return;
 }
 
 =method remove_container($id, %opts)

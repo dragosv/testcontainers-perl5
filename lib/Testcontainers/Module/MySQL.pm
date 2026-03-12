@@ -130,6 +130,7 @@ sub DEMOLISH {
     my ($self, $in_global) = @_;
     return if $in_global;
     $self->_inner->terminate if $self->_inner;
+    return;
 }
 
 1;

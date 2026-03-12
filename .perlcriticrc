@@ -10,3 +10,12 @@ verbose  = %f:%l:%c: %m (%p; Severity: %s)\n
 
 # We export convenience functions by design
 [-Modules::ProhibitAutomaticExportation]
+
+# Container API uses 'state' and 'exec' as method names intentionally
+[-Subroutines::ProhibitBuiltinHomonyms]
+
+# Inner ::Container packages in module files are idiomatic Perl
+[-Modules::ProhibitMultiplePackages]
+
+# use constant is fine for simple defaults
+[-ValuesAndExpressions::ProhibitConstantPragma]
