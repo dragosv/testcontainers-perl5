@@ -1,7 +1,8 @@
 package Testcontainers::Wait;
 # ABSTRACT: Wait strategy factory for Testcontainers
 
-use v5.42;
+use strict;
+use warnings;
 use Carp qw( croak );
 
 use Testcontainers::Wait::HostPort;

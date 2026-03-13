@@ -1,4 +1,5 @@
-use v5.42;
+use strict;
+use warnings;
 use Test::More;
 
 # Module integration tests requiring Docker

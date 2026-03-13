@@ -1,7 +1,8 @@
 package Testcontainers::Wait::HostPort;
 # ABSTRACT: Wait strategy for listening ports
 
-use v5.42;
+use strict;
+use warnings;
 use Moo;
 use Carp qw( croak );
 use IO::Socket::INET;

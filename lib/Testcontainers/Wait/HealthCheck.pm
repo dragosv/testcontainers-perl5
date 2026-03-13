@@ -1,7 +1,8 @@
 package Testcontainers::Wait::HealthCheck;
 # ABSTRACT: Wait strategy for Docker health checks
 
-use v5.42;
+use strict;
+use warnings;
 use Moo;
 use Carp qw( croak );
 use Log::Any qw( $log );

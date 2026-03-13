@@ -1,7 +1,8 @@
 package Testcontainers::Wait::HTTP;
 # ABSTRACT: Wait strategy for HTTP endpoints
 
-use v5.42;
+use strict;
+use warnings;
 use Moo;
 use Carp qw( croak );
 use IO::Socket::INET;

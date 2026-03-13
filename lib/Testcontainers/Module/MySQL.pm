@@ -1,7 +1,8 @@
 package Testcontainers::Module::MySQL;
 # ABSTRACT: MySQL container module for Testcontainers
 
-use v5.42;
+use strict;
+use warnings;
 use Carp qw( croak );
 use Testcontainers;
 use Testcontainers::Wait;
@@ -89,7 +90,8 @@ C<port>, C<startup_timeout>, C<name>.
 
 package Testcontainers::Module::MySQL::Container;
 
-use v5.42;
+use strict;
+use warnings;
 use Moo;
 
 has _inner        => (is => 'ro', required => 1, handles => [qw(
@@ -128,6 +130,7 @@ sub DEMOLISH {
     my ($self, $in_global) = @_;
     return if $in_global;
     $self->_inner->terminate if $self->_inner;
+    return;
 }
 
 1;

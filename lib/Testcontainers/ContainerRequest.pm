@@ -1,7 +1,8 @@
 package Testcontainers::ContainerRequest;
 # ABSTRACT: Container configuration request
 
-use v5.42;
+use strict;
+use warnings;
 use Moo;
 use Carp qw( croak );
 

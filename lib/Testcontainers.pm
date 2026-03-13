@@ -1,7 +1,8 @@
 package Testcontainers;
 # ABSTRACT: Testcontainers for Perl - Docker containers for testing
 
-use v5.42;
+use strict;
+use warnings;
 use Carp qw( croak );
 use Log::Any qw( $log );
 

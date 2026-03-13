@@ -1,7 +1,8 @@
 package Testcontainers::Wait::Log;
 # ABSTRACT: Wait strategy for container log messages
 
-use v5.42;
+use strict;
+use warnings;
 use Moo;
 use Carp qw( croak );
 use Log::Any qw( $log );

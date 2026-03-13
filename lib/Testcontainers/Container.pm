@@ -1,7 +1,8 @@
 package Testcontainers::Container;
 # ABSTRACT: A running Docker container managed by Testcontainers
 
-use v5.42;
+use strict;
+use warnings;
 use Moo;
 use Carp qw( croak );
 use Log::Any qw( $log );
@@ -279,6 +280,7 @@ Returns hashref with C<exit_code> and C<output>.
 sub stop {
     my ($self, %opts) = @_;
     $self->docker->stop_container($self->id, %opts);
+    return;
 }
 
 =method stop(%opts)
@@ -291,6 +293,7 @@ sub start {
     my ($self) = @_;
     $self->docker->start_container($self->id);
     $self->refresh;
+    return;
 }
 
 =method start
@@ -323,6 +326,7 @@ sub DEMOLISH {
     return if $in_global_destruction;
     # Auto-cleanup on object destruction if not already terminated
     $self->terminate unless $self->_terminated;
+    return;
 }
 
 =head1 SEE ALSO
