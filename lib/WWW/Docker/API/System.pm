@@ -112,22 +112,44 @@ Health check endpoint. Returns C<OK> string if daemon is responsive.
 
 sub events {
   my ($self, %opts) = @_;
+  my $callback = delete $opts{callback};
   my %params;
   $params{since}   = $opts{since}   if defined $opts{since};
   $params{until}   = $opts{until}   if defined $opts{until};
   $params{filters} = $opts{filters} if defined $opts{filters};
+  if ($callback) {
+    return $self->client->stream_get('/events',
+      params   => \%params,
+      callback => $callback,
+    );
+  }
   return $self->client->get('/events', params => \%params);
 }
 
 =method events
 
+    # Bounded query (since+until) — returns arrayref of event hashrefs:
     my $events = $system->events(
         since   => 1234567890,
         until   => 1234567900,
         filters => { type => ['container'] },
     );
 
+    # Real-time streaming — invokes callback for each event as it arrives:
+    $system->events(
+        filters  => { type => ['container'] },
+        callback => sub {
+            my ($event) = @_;
+            printf "Event: %s %s\n", $event->{Type}, $event->{Action};
+        },
+    );
+
 Get real-time events from the Docker daemon.
+
+When C<callback> is provided, events are read incrementally from the socket and
+the callback is invoked once per event as JSON objects arrive.  This is required
+for long-lived (unbounded) streams; without a C<callback> the response body is
+buffered in memory, which is only safe when C<until> bounds the response.
 
 Options:
 
@@ -138,6 +160,8 @@ Options:
 =item * C<until> - Show events created before this timestamp
 
 =item * C<filters> - Hashref of filters (e.g., C<< { type => ['container', 'image'] } >>)
+
+=item * C<callback> - CodeRef invoked with each decoded event hashref (enables streaming mode)
 
 =back
 

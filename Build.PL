@@ -25,8 +25,8 @@ if (open my $fh, '<', 'cpanfile') {
     }
     close $fh;
 } else {
-    warn "cpanfile not found, using minimal dependencies\n";
-    %requires = ('perl' => '5.040', 'Moo' => '2.005');
+    die "cpanfile not found in the distribution root; cannot determine dependencies.\n"
+      . "Please ensure cpanfile exists before running perl Build.PL.\n";
 }
 
 my $perl_ver = delete $requires{'perl'};

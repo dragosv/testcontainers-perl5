@@ -54,7 +54,7 @@ sub create {
 
 =method create
 
-    my $exec = $exec->create($container_id,
+    my $exec = $docker->exec->create($container_id,
         Cmd          => ['/bin/sh', '-c', 'echo hello'],
         AttachStdout => 1,
         AttachStderr => 1,

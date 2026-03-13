@@ -281,6 +281,118 @@ Options: C<params> (hashref of query parameters).
 
 =cut
 
+sub stream_get {
+  my ($self, $path, %opts) = @_;
+  my $callback = delete $opts{callback}
+    or croak 'stream_get requires a callback option';
+
+  my $version  = $self->api_version;
+  my $url_path = defined $version ? "/v$version$path" : $path;
+
+  if ($opts{params}) {
+    my @pairs;
+    for my $k (sort keys %{$opts{params}}) {
+      my $v = $opts{params}{$k};
+      next unless defined $v;
+      if (ref $v eq 'HASH') { $v = encode_json($v) }
+      push @pairs, _uri_encode($k) . '=' . _uri_encode($v);
+    }
+    $url_path .= '?' . join('&', @pairs) if @pairs;
+  }
+
+  $log->debugf("GET (stream) %s", $url_path);
+
+  my $request  = "GET $url_path HTTP/1.1\r\n";
+  $request    .= "Host: localhost\r\n";
+  $request    .= "Connection: close\r\n";
+  $request    .= "User-Agent: WWW-Docker/$VERSION\r\n";
+  $request    .= "\r\n";
+
+  my $sock = $self->_reconnect;
+  print $sock $request;
+
+  # Read status line
+  my $status_line = <$sock>;
+  croak "No response from Docker daemon" unless defined $status_line;
+  $status_line =~ s/\r?\n$//;
+  my (undef, $status_code) = split /\s+/, $status_line, 3;
+
+  # Read headers
+  my %headers;
+  while (my $line = <$sock>) {
+    $line =~ s/\r?\n$//;
+    last if $line eq '';
+    if ($line =~ /^([^:]+):\s*(.*)$/) {
+      $headers{lc $1} = $2;
+    }
+  }
+
+  if ($status_code >= 400) {
+    local $/;
+    my $body = <$sock> // '';
+    close $sock;
+    $self->_clear_socket;
+    croak "Docker API error ($status_code): $body";
+  }
+
+  # Stream NDJSON body line by line, calling $callback for each parsed object.
+  my $chunked = (($headers{'transfer-encoding'} // '') eq 'chunked');
+  if ($chunked) {
+    while (1) {
+      my $chunk_header = <$sock>;
+      last unless defined $chunk_header;
+      $chunk_header =~ s/\r?\n$//;
+      my $chunk_size = hex($chunk_header);
+      last if $chunk_size == 0;
+
+      my $chunk = '';
+      my $read  = 0;
+      while ($read < $chunk_size) {
+        my $buf;
+        my $n = read($sock, $buf, $chunk_size - $read);
+        last unless $n;
+        $chunk .= $buf;
+        $read  += $n;
+      }
+      <$sock>;  # trailing CRLF after chunk data
+
+      for my $line (split /\r?\n/, $chunk) {
+        next unless $line =~ /\S/;
+        my $obj = eval { decode_json($line) };
+        $callback->($obj) if defined $obj;
+      }
+    }
+  }
+  else {
+    while (my $line = <$sock>) {
+      $line =~ s/\r?\n$//;
+      next unless $line =~ /\S/;
+      my $obj = eval { decode_json($line) };
+      $callback->($obj) if defined $obj;
+    }
+  }
+
+  close $sock;
+  $self->_clear_socket;
+  return;
+}
+
+=method stream_get
+
+    $client->stream_get($path, params => \%params, callback => sub {
+        my ($event) = @_;
+        # $event is a decoded hashref for each NDJSON line
+    });
+
+Perform a streaming HTTP GET request, reading the response body incrementally.
+The C<callback> option is required and is invoked once per decoded JSON object
+as they arrive from the socket.  This is suitable for long-lived Docker
+endpoints such as C</events> that send an unbounded NDJSON stream.
+
+Options: C<params> (hashref of query parameters), C<callback> (required CodeRef).
+
+=cut
+
 sub post {
   my ($self, $path, $body, %opts) = @_;
   $opts{body} = $body if defined $body;
