@@ -67,7 +67,7 @@ jobs:
         run: perl Build.PL && ./Build manifest && ./Build install --installdeps
 
       - name: Run unit tests
-        run: prove -lv t/01-load.t t/02-container-request.t t/03-wait-strategies.t
+        run: prove -lv t/01-load.t t/02-container-request.t t/03-wait-strategies.t t/06-basic.t t/07-system.t t/08-version.t t/09-containers.t t/10-images.t t/11-networks.t t/12-volumes.t
 
       - name: Run unit tests
         run: |

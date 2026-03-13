@@ -19,6 +19,7 @@ recommends 'HTTP::Tiny', '0.076';
 on 'test' => sub {
     requires 'Test::More', '0.98';
     requires 'Test::Exception', '0.43';
+    requires 'Path::Tiny', '0.100';
 };
 
 # Development dependencies
