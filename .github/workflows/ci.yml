@@ -69,6 +69,11 @@ jobs:
       - name: Run unit tests
         run: prove -lv t/01-load.t t/02-container-request.t t/03-wait-strategies.t
 
+      - name: Run unit tests
+        run: |
+           cpanm --notest TAP::Formatter::JUnit
+           prove -lv --formatter TAP::Formatter::JUnit t/01-load.t t/02-container-request.t t/03-wait-strategies.t > junit-unit-tests.xml
+
       - name: Test Summary
         uses: test-summary/action@v2
         with:
@@ -101,6 +106,7 @@ jobs:
         run: |
           cpanm --installdeps .
           cpanm --notest HTTP::Tiny
+          cpanm --notest TAP::Formatter::JUnit
 
       - name: Pre-pull Docker images
         run: |
@@ -112,18 +118,25 @@ jobs:
       - name: Run integration tests
         env:
           TESTCONTAINERS_LIVE: "1"
-        run: prove -lv t/04-integration.t
+        run: prove -lv --formatter TAP::Formatter::JUnit t/04-integration.t > junit-integration-tests.xml
 
       - name: Run module tests
         env:
           TESTCONTAINERS_LIVE: "1"
-        run: prove -lv t/05-modules.t
+        run: prove -lv --formatter TAP::Formatter::JUnit t/05-modules.t > junit-module-tests.xml
 
       - name: Clean up containers
         if: always()
         run: |
           docker ps -a --filter "label=org.testcontainers" -q | xargs -r docker rm -f
           docker system prune -f
+
+      - name: Test Summary
+        uses: test-summary/action@v2
+        with:
+          paths: "**/junit-*.xml"
+        if: always()
+
 
   # This job serves as confirmation that all test jobs finished
   end:
