@@ -28,7 +28,7 @@ L<WWW::Docker::API::Networks> methods.
 
 has client => (
   is       => 'ro',
-  weak_ref => 1,
+  required => 1,
 );
 
 =attr client
