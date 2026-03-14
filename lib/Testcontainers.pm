@@ -9,6 +9,7 @@ use Log::Any qw( $log );
 use Testcontainers::DockerClient;
 use Testcontainers::Container;
 use Testcontainers::ContainerRequest;
+use Testcontainers::Labels qw( session_id );
 use Testcontainers::Wait;
 
 our $VERSION = '0.001';
@@ -97,6 +98,7 @@ sub run {
         privileged    => $opts{privileged}    // 0,
         network_mode  => $opts{network_mode}  // undef,
         networks      => $opts{networks}      // [],
+        session_id    => session_id(),
     );
 
     # Create the Docker client

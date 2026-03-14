@@ -5,6 +5,9 @@ use strict;
 use warnings;
 use Moo;
 use Carp qw( croak );
+use Testcontainers::Labels qw(
+    default_labels merge_custom_labels
+);
 
 our $VERSION = '0.001';
 
@@ -49,6 +52,12 @@ has entrypoint => (
 has name => (
     is      => 'ro',
     default => undef,
+);
+
+has session_id => (
+    is      => 'ro',
+    lazy    => 1,
+    default => sub { Testcontainers::Labels::session_id() },
 );
 
 has wait_for => (
@@ -103,11 +112,11 @@ sub to_docker_config {
         $config->{Env} = [ map { "$_=$self->{env}{$_}" } sort keys %{$self->env} ];
     }
 
-    # Labels - always add testcontainers label
-    my %labels = %{$self->labels};
-    $labels{'org.testcontainers'} = 'true';
-    $labels{'org.testcontainers.lang'} = 'perl';
-    $config->{Labels} = \%labels;
+    # Labels — merge standard Testcontainers labels with user-supplied ones.
+    # User labels starting with 'org.testcontainers' are rejected.
+    my %defaults = default_labels($self->session_id);
+    my %merged   = merge_custom_labels(\%defaults, $self->labels);
+    $config->{Labels} = \%merged;
 
     # Command
     if (@{$self->cmd}) {
