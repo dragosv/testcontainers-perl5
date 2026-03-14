@@ -39,6 +39,11 @@ has labels => (
     default => sub { {} },
 );
 
+has _internal_labels => (
+    is      => 'ro',
+    default => sub { {} },
+);
+
 has cmd => (
     is      => 'ro',
     default => sub { [] },
@@ -114,8 +119,13 @@ sub to_docker_config {
 
     # Labels — merge standard Testcontainers labels with user-supplied ones.
     # User labels starting with 'org.testcontainers' are rejected.
+    # Internal (framework) labels bypass the prefix check.
     my %defaults = default_labels($self->session_id);
     my %merged   = merge_custom_labels(\%defaults, $self->labels);
+    # Layer in framework-internal labels (e.g. org.testcontainers.module)
+    for my $k (keys %{$self->_internal_labels}) {
+        $merged{$k} = $self->_internal_labels->{$k};
+    }
     $config->{Labels} = \%merged;
 
     # Command
