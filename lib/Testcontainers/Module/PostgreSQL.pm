@@ -67,7 +67,7 @@ sub postgres_container {
             POSTGRES_PASSWORD => $password,
             POSTGRES_DB       => $database,
         },
-        labels          => {
+        _internal_labels => {
             'org.testcontainers.module' => 'postgresql',
         },
         wait_for        => Testcontainers::Wait::for_log(

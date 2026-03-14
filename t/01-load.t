@@ -11,6 +11,7 @@ use_ok('Testcontainers::ContainerRequest');
 use_ok('Testcontainers::DockerClient');
 use_ok('Testcontainers::Wait');
 use_ok('Testcontainers::Wait::Base');
+use_ok('Testcontainers::Labels');
 use_ok('Testcontainers::Wait::HostPort');
 use_ok('Testcontainers::Wait::HTTP');
 use_ok('Testcontainers::Wait::Log');

@@ -58,7 +58,7 @@ sub mysql_container {
             MYSQL_PASSWORD      => $password,
             MYSQL_DATABASE      => $database,
         },
-        labels          => {
+        _internal_labels => {
             'org.testcontainers.module' => 'mysql',
         },
         wait_for        => Testcontainers::Wait::for_log(

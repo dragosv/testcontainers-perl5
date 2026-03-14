@@ -49,7 +49,7 @@ sub redis_container {
 
     my $container = Testcontainers::run($image,
         exposed_ports   => [$port],
-        labels          => {
+        _internal_labels => {
             'org.testcontainers.module' => 'redis',
         },
         ($opts{password} ? (cmd => \@cmd) : ()),
