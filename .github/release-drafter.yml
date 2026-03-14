@@ -1,0 +1,51 @@
+name-template: v$NEXT_PATCH_VERSION
+tag-template: v$NEXT_PATCH_VERSION
+template: |
+    # What's Changed
+    $CHANGES
+categories:
+  - title: ⚠️ Breaking Changes
+    labels:
+      - 'breaking change'
+  - title: 🔒 Security
+    labels:
+      - 'security'
+  - title: 🚀 Features
+    labels:
+      - 'enhancement'
+      - 'feature'
+  - title: 🐛 Bug Fixes
+    labels:
+      - 'bug'
+  - title: 📖 Documentation
+    labels:
+      - 'documentation'
+  - title: 🧹 Housekeeping
+    labels:
+      - 'chore'
+      - 'test flakiness'
+  - title: 📦 Dependency updates
+    labels:
+      - 'dependencies'
+autolabeler:
+  - label: 'breaking change'
+    title:
+      - '/^[a-z]+(\(.+\))?!\:/'
+  - label: 'security'
+    title:
+      - '/^security(\(.+\))?!?\:/'
+  - label: 'feature'
+    title:
+      - '/^feat(\(.+\))?!?\:/'
+  - label: 'bug'
+    title:
+      - '/^(fix)(\(.+\))?!?\:/'
+  - label: 'documentation'
+    title:
+      - '/^docs(\(.+\))?!?\:/'
+  - label: 'chore'
+    title:
+      - '/^chore(\(.+\))?!?\:/'
+  - label: 'dependencies'
+    title:
+      - '/^deps(\(.+\))?!?\:/'
