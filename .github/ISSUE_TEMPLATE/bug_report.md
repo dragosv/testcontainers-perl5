@@ -31,7 +31,7 @@ What actually happened.
 ## Environment
 
 - OS: [e.g., macOS 14.0, Ubuntu 22.04]
-- Swift Version: [e.g., 6.2]
+- Perl Version: [e.g., 5.40, 5.42]
 - Testcontainers Version: [e.g., 1.0.0]
 - Docker Client Version: [e.g., 1.44]
 - 

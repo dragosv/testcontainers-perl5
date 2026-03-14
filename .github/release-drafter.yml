@@ -25,7 +25,8 @@ categories:
       - 'chore'
       - 'test flakiness'
   - title: 📦 Dependency updates
-    label: 'dependencies'
+    labels:
+      - 'dependencies'
 autolabeler:
   - label: 'breaking change'
     title:
