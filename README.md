@@ -6,8 +6,7 @@
 # Testcontainers for Perl 5
 
 Perl 5 implementation of [Testcontainers](https://testcontainers.com/), inspired by the
-[Go reference implementation](https://golang.testcontainers.org/). Incrorporates the work from
-[WWW::Docker](https://github.com/Getty/p5-www-docker) as the Docker client, as it is mot maintained.
+[Go reference implementation](https://golang.testcontainers.org/). 
 
 Testcontainers makes it simple to create and clean up container-based
 dependencies for automated integration/smoke tests.
@@ -278,3 +277,7 @@ This software is copyright (c) 2026 by Testcontainers Contributors.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
+
+## Acknowledgments
+
+This project includes code derived from [WWW::Docker](https://github.com/Getty/p5-www-docker) by [Torsten Raudssus](https://github.com/getty), licensed under Perl license.
