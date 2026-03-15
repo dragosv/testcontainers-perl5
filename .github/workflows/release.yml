@@ -1,0 +1,148 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    name: "Test before release"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Setup Perl
+        uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: "5.42"
+
+      - name: Verify Docker is available
+        run: |
+          docker version
+          docker info
+
+      - name: Install dependencies
+        run: |
+          cpanm --installdeps .
+          cpanm --notest HTTP::Tiny
+
+      - name: Build
+        run: perl Build.PL && ./Build
+
+      - name: Run unit tests
+        run: prove -lv t/01-load.t t/02-container-request.t t/03-wait-strategies.t t/06-basic.t t/07-system.t t/08-version.t t/09-containers.t t/10-images.t t/11-networks.t t/12-volumes.t
+
+      - name: Pre-pull Docker images
+        run: |
+          docker pull nginx:alpine &
+          docker pull postgres:16-alpine &
+          docker pull redis:7-alpine &
+          wait
+
+      - name: Run integration tests
+        env:
+          TESTCONTAINERS_LIVE: "1"
+        run: prove -lv t/04-integration.t t/05-modules.t
+
+      - name: Clean up containers
+        if: always()
+        run: |
+          docker ps -a --filter "label=org.testcontainers" -q | xargs -r docker rm -f
+          docker system prune -f
+
+  build-dist:
+    name: Build distribution
+    needs: [test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Setup Perl
+        uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: "5.42"
+
+      - name: Install dependencies
+        run: cpanm --installdeps .
+
+      - name: Build distribution
+        run: |
+          perl Build.PL
+          ./Build manifest
+          ./Build dist
+
+      - name: Verify tarball
+        run: |
+          ls -la Testcontainers-*.tar.gz
+          tar tzf Testcontainers-*.tar.gz | head -20
+
+      - name: Upload distribution artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cpan-dist
+          path: Testcontainers-*.tar.gz
+
+  github-release:
+    name: Create GitHub Release
+    needs: [build-dist]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download distribution artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: cpan-dist
+
+      - name: Extract version from tag
+        id: version
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: Testcontainers-*.tar.gz
+          body: |
+            ## Installation
+
+            ```bash
+            cpanm --installdeps .
+            perl Build.PL && ./Build && ./Build install
+            ```
+
+            See [QUICKSTART.md](https://github.com/${{ github.repository }}/blob/${{ github.ref_name }}/QUICKSTART.md) for usage guide.
+
+  publish-cpan:
+    name: Publish to CPAN
+    needs: [build-dist]
+    runs-on: ubuntu-latest
+    environment: cpan
+    steps:
+      - name: Setup Perl
+        uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: "5.42"
+
+      - name: Download distribution artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: cpan-dist
+
+      - name: Install CPAN upload tool
+        run: cpanm --notest CPAN::Uploader
+
+      - name: Upload to CPAN
+        env:
+          CPAN_USERNAME: ${{ secrets.CPAN_USERNAME }}
+          CPAN_PASSWORD: ${{ secrets.CPAN_PASSWORD }}
+        run: cpan-upload --user "$CPAN_USERNAME" --password "$CPAN_PASSWORD" Testcontainers-*.tar.gz
