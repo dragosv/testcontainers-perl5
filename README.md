@@ -1,31 +1,27 @@
+[![CI/CD](https://github.com/dragosv/testcontainers-perl5/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/dragosv/testcontainers-perl5/actions/workflows/ci.yml)
+[![Language](https://img.shields.io/badge/Perl-5.40+-blue.svg)](https://www.perl.org/)
+[![Docker](https://img.shields.io/badge/Docker%20Engine%20API-%20%201.44-blue)](https://docs.docker.com/engine/api/v1.44/)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=shields)](http://makeapullrequest.com)
+
 # Testcontainers for Perl 5
 
 Perl 5 implementation of [Testcontainers](https://testcontainers.com/), inspired by the
-[Go reference implementation](https://golang.testcontainers.org/). Uses
-[WWW::Docker](https://github.com/Getty/p5-www-docker) as the Docker client.
+[Go reference implementation](https://golang.testcontainers.org/). Incrorporates the work from
+[WWW::Docker](https://github.com/Getty/p5-www-docker) as the Docker client, as it is mot maintained.
 
 Testcontainers makes it simple to create and clean up container-based
 dependencies for automated integration/smoke tests.
 
 ## Requirements
 
-- Perl 5.42+
+- Perl 5.40+
 - Docker daemon (local or remote)
-- [WWW::Docker](https://metacpan.org/pod/WWW::Docker) 0.100+
 
 ## Installation
 
 ```bash
-cpanm WWW::Docker
 cpanm --installdeps .
-```
-
-Or from source:
-
-```bash
-dzil build
-dzil test
-dzil install
+perl Build.PL && ./Build && ./Build install
 ```
 
 ## Quick Start

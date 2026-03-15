@@ -12,9 +12,12 @@ Uses WWW::Docker as the Docker client library.
 - `lib/Testcontainers/Container.pm` - Running container wrapper
 - `lib/Testcontainers/ContainerRequest.pm` - Container configuration
 - `lib/Testcontainers/DockerClient.pm` - WWW::Docker wrapper
+- `lib/Testcontainers/Labels.pm` - Label management (org.testcontainers.*)
 - `lib/Testcontainers/Wait.pm` - Wait strategy factory
 - `lib/Testcontainers/Wait/*.pm` - Wait strategy implementations
 - `lib/Testcontainers/Module/*.pm` - Pre-built container modules
+- `lib/WWW/Docker.pm` - Vendored Docker client
+- `lib/WWW/Docker/*.pm` - Vendored Docker client components
 
 ## Test Architecture
 
@@ -23,6 +26,7 @@ Uses WWW::Docker as the Docker client library.
 - `t/03-wait-strategies.t` - Wait strategy unit tests (no Docker)
 - `t/04-integration.t` - Integration tests (requires Docker, TESTCONTAINERS_LIVE=1)
 - `t/05-modules.t` - Module integration tests (requires Docker, TESTCONTAINERS_LIVE=1)
+- `t/06-basic.t` through `t/12-volumes.t` - WWW::Docker unit tests (no Docker)
 
 ## Running Tests
 
@@ -36,8 +40,8 @@ TESTCONTAINERS_LIVE=1 prove -l t/
 
 ## Key Dependencies
 
-- Perl 5.42+
+- Perl 5.40+
 - Moo (object system)
-- WWW::Docker (Docker client)
+- WWW::Docker (vendored Docker client)
 - Log::Any (logging)
 - HTTP::Tiny (optional, for HTTP wait strategy)
