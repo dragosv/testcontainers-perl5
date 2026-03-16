@@ -5,8 +5,6 @@ use Moo;
 use Carp qw( croak );
 use Log::Any qw( $log );
 
-our $VERSION = '0.101';
-
 use WWW::Docker::API::System;
 use WWW::Docker::API::Containers;
 use WWW::Docker::API::Images;
