@@ -49,6 +49,10 @@ my $builder = Module::Build->new(
 
     meta_merge => {
         'meta-spec' => { version => 2 },
+        no_index    => {
+            directory => ['lib/WWW'],
+            namespace => ['WWW::Docker'],
+        },
         resources   => {
             repository => {
                 type => 'git',
